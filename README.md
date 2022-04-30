@@ -15,4 +15,3 @@ This application performs the steps of:-
 5) Adding the SecurityUtil Class
 6) Getting Todos by Task Method Impelementation
 7) Implemented Stateless Security with JWT - The Authz and ContainerRequestFilter
-8) 
