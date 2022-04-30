@@ -1,16 +1,16 @@
 package academy.learnprograrmming.rest;
 
+import academy.learnprogramming.entity.User;
 import academy.learnprogramming.service.SecurityUtil;
+import academy.learnprogramming.service.TodoService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.security.Key;
 import java.time.LocalDate;
@@ -24,6 +24,8 @@ public class UserRest {
     private SecurityUtil securityUtil;
     @Context
     private UriInfo uriInfo;
+    @Inject
+    private TodoService todoService;
 
 
     @Path("login")
@@ -49,11 +51,26 @@ public class UserRest {
 
     private String generateToken(String email) {
         Key securityKey = securityUtil.getSecurityKey();
-       return Jwts.builder().setSubject(email).setIssuedAt(new Date()).setIssuer(uriInfo.getBaseUri().toString())
+        return Jwts.builder().setSubject(email).setIssuedAt(new Date()).setIssuer(uriInfo.getBaseUri().toString())
                 .setAudience(uriInfo.getAbsolutePath().toString())
                 .setExpiration(securityUtil.toDate(LocalDateTime.now().plusMinutes(15)))
                 .signWith(SignatureAlgorithm.HS512, securityKey).compact();
 
 
     }
+
+
+    @POST
+    @Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response saveUser(@NotNull User user) {
+        todoService.saveUser(user);
+
+        return Response.ok(user).build();
+
+    }
+
+
+
 }

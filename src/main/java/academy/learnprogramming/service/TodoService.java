@@ -18,7 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 /**
- * @author Seeraj
+ * @author Yera
  */
 
 
@@ -45,7 +45,7 @@ public class TodoService {
 
     public User saveUser(User user) {
 
-        Integer count = (Integer) queryService.countUserByEmail(user.getEmail()).get(0);
+        Long count = (Long) queryService.countUserByEmail(user.getEmail()).get(0);
 
         if (user.getId() == null && count == 0) {
             Map<String, String> credMap = securityUtil.hashPassword(user.getPassword());
@@ -84,11 +84,11 @@ public class TodoService {
 
 
     public Todo findToDoById(Long id) {
-        return entityManager.find(Todo.class, id);
+        return queryService.findTodoById(id);
     }
 
 
     public List<Todo> getTodos() {
-        return entityManager.createQuery("SELECT t from Todo t", Todo.class).getResultList();
+        return queryService.getAllTodos();
     }
 }

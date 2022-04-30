@@ -40,13 +40,7 @@ public class TodoServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        logger = Logger.getLogger(TodoServiceTest.class.getName());
 
-        user.setEmail("bla@bla.com");
-        user.setFullName("Donald Trump");
-        user.setPassword("jDTrumpf@41");
-
-        todoService.saveUser(user);
 
     }
 
@@ -57,12 +51,6 @@ public class TodoServiceTest {
 
     @Test
     public void saveUser() {
-        assertNotNull(user.getId());
-        logger.log(Level.INFO, user.getId().toString());
-
-        assertNotEquals("The user password is not same as hashed", "jDTrumpf@41", user.getPassword());
-
-        logger.log(Level.INFO, user.getPassword());
 
     }
 }
