@@ -1,6 +1,9 @@
 package academy.learnprogramming.service;
 
 
+import academy.learnprogramming.entity.User;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
@@ -25,6 +28,15 @@ public class SecurityUtil {
 
     public static final String HASHED_PASSWORD_KEY = "hashedPassword";
     public static final String SALT_KEY = "salt";
+    public static final String BEARER = "Bearer";
+
+    private SecretKey securityKey;
+
+    @PostConstruct
+    private void init() {
+        securityKey = generateKey();
+    }
+
 
     public Date toDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -59,7 +71,24 @@ public class SecurityUtil {
 
 
     public boolean authenticateUser(String email, String password) {
-        return queryService.authenticateUser(email, password);
 
+        User user = queryService.findUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+
+        return passwordsMatch(user.getPassword(), user.getSalt(), password);
+
+    }
+
+    private SecretKey generateKey() {
+
+        return MacProvider.generateKey(SignatureAlgorithm.HS512);
+
+
+    }
+
+    public SecretKey getSecurityKey() {
+        return securityKey;
     }
 }
